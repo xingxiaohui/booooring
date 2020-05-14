@@ -1,0 +1,200 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<style>
+    body {
+        border: 0;
+    }
+
+    .out {
+        width: 606px;
+        height: 606px;
+        margin: 0 auto;
+        border: 1px solid #CCC;
+    }
+
+    .out img {
+        width: 200px;
+        height: 200px;
+    }
+
+    .in {
+        width: 200px;
+        height: 200px;
+        float: left;
+        border: 1px solid #CCC;
+    }
+
+    .no_see {
+        width: 200px;
+        height: 200px;
+        background-color: white;
+        float: left;
+        border: 1px solid #CCC;
+    }
+
+    .btn {
+        width: 50px;
+        height: 25px;
+        margin: 50px auto;
+    }
+
+    .begin {
+        width: 50px;
+        height: 25px;
+    }
+
+    button {
+        padding: 8px 20px;
+        color: white;
+        background-color: #5EB264;
+        border-radius: 4px;
+        border-width: 0;
+        margin: 0;
+        outline: none;
+        font-family: YaHei;
+        font-size: 17px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #7EC37A;
+    }
+
+    .btnbox {
+        width: 400px;
+        float: right;
+    }
+
+    .msgbox {
+        width: 30%;
+        height: 250px;
+        text-align: center;
+        padding-top: 20px;
+        background-color: #FFF;
+        border: 1px solid #7EC37A;
+        position: absolute;
+        top: 200px;
+        left: 35%;
+    }
+
+</style>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>九宫格拼图</title>
+</head>
+
+<body>
+    <div class="btnbox">
+        <button onclick="restart();">重新开始</button>
+        <button onclick="endGame();">一键还原</button>
+    </div>
+    <div class="msgbox" style="display:none;">
+        <h2 style="margin: 20px 0 140px 0;">拼图完成，你真是太棒了！</h2>
+        <button onclick="closeMsg();">确&nbsp;&nbsp;定</button>
+    </div>
+    <div class="out">
+    </div>
+</body>
+<script src="jquery-3.2.1.min.js"></script>
+<script>
+    $(function () {
+        startGame(true);
+    });
+    function startGame(flag) {
+        //获取min和max之间的一个随机整数[5,100];
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        //打乱数组
+        var arr = [0, 1, 2, 3, 4, 5, 6, 7];
+        var str = '';
+        if (flag) {
+            let _arr = arr.slice(); //slice不会影响原来的数组，但是splice就会影响原来的arr数组
+            for (let i = 0; i < _arr.length; i++) {
+                let j = getRandomInt(0, i);
+                let t = _arr[i];
+                _arr[i] = _arr[j];
+                _arr[j] = t;
+            }
+            for (j = 0; j < _arr.length; j++) {
+                str += '<div class="in"><img id="' + _arr[j] + '" src="images/' + _arr[j] + '.png" alt="" /></div>';
+            }
+            str += '<div class="no_see"><img id="8" src="images/8.png" alt="" style="display:none;"/></div>';
+
+        } else {
+            for (j = 0; j < arr.length; j++) {
+                str += '<div class="in"><img id="' + arr[j] + '" src="images/' + arr[j] + '.png" alt="" /></div>';
+            }
+            str += '<div class="no_see"><img id="8" src="images/8.png" alt=""/></div>';
+        }
+        $(".out").html(str);
+
+        $('.in').click(function () {
+            var tmp = false;
+            var click_num = $(this).index();
+            var no_see_num = $('.no_see').index();
+
+            var click_x = click_num % 3;
+            var click_y = Math.floor(click_num / 3);
+
+            var no_see_x = no_see_num % 3;
+            var no_see_y = Math.floor(no_see_num / 3);
+
+            if (click_x == no_see_x) { //同一行
+                if (click_y == no_see_y + 1 || click_y == no_see_y - 1) {
+                    tmp = true; //保证相邻
+                }
+            } else if (click_y == no_see_y) { //同一列
+                if (click_x == no_see_x + 1 || click_x == no_see_x - 1) {
+                    tmp = true; //保证相邻
+                }
+            }
+            if (tmp) {
+                var t = $(this).clone();
+                t.addClass('bit');
+                $('.no_see').before(t);
+                $(this).before($('.no_see'));
+                t.before($(this))
+                t.remove();
+            }
+            if (judge()) {
+                endGame();
+            }
+        })
+
+    }
+
+    function restart() {
+        startGame(true);
+    }
+
+    // 判断是否拼好  逻辑未完成
+    function judge() {
+        var ids = '';
+        $(".out img").each(function (index, el) {
+            var id = $(this).attr("id");
+            if (typeof (id) !== 'undefined') {
+                ids += id;
+            }
+        });
+        if (ids == "012345678") {
+            return true;
+        }
+        return false;
+    }
+
+    function endGame() {
+        startGame(false);
+        $("#8").attr("style", "display:block;");//显示div
+        var t = setTimeout(function end() {
+            $(".msgbox").attr("style", "display:block;");//显示div
+        }, 1000);
+    }
+
+    function closeMsg() {
+        $(".msgbox").attr("style", "display:none;");//显示div
+    }
+</script>
+
+</html>
