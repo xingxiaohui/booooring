@@ -169,7 +169,7 @@
         startGame(true);
     }
 
-    // 判断是否拼好  逻辑未完成
+    // 判断图片的id是否跟div的id对应来确定游戏是否结束
     function judge() {
         var ids = '';
         $(".out img").each(function (index, el) {
@@ -186,14 +186,14 @@
 
     function endGame() {
         startGame(false);
-        $("#8").attr("style", "display:block;");//显示div
+        $("#8").attr("style", "display:block;");// 填充空白位置的图
         var t = setTimeout(function end() {
-            $(".msgbox").attr("style", "display:block;");//显示div
+            $(".msgbox").attr("style", "display:block;");//显示结束消息提醒
         }, 1000);
     }
 
     function closeMsg() {
-        $(".msgbox").attr("style", "display:none;");//显示div
+        $(".msgbox").attr("style", "display:none;");//关闭结束对话框
     }
 </script>
 
