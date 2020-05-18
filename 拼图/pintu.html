@@ -5,9 +5,9 @@
     }
 
     .out {
-        width: 606px;
-        height: 606px;
-        margin: 0 auto;
+        width: 603px;
+        height: 603px;
+        margin: 100px auto;
         border: 1px solid #CCC;
     }
 
@@ -20,7 +20,7 @@
         width: 200px;
         height: 200px;
         float: left;
-        border: 1px solid #CCC;
+        border: 0.5px solid #CCC;
     }
 
     .no_see {
@@ -28,7 +28,7 @@
         height: 200px;
         background-color: white;
         float: left;
-        border: 1px solid #CCC;
+        border: 0.5px solid #CCC;
     }
 
     .btn {
@@ -62,14 +62,15 @@
 
     .btnbox {
         width: 400px;
-        float: right;
+        position: absolute;
+        top: 20px;
+        right: 0px;
     }
 
     .msgbox {
         width: 30%;
-        height: 250px;
         text-align: center;
-        padding-top: 20px;
+        padding-bottom: 15px;
         background-color: #FFF;
         border: 1px solid #7EC37A;
         position: absolute;
@@ -77,20 +78,31 @@
         left: 35%;
     }
 
+    .tiketbox {
+        margin-bottom: 20px;
+    }
+
+    .tiketbox img {
+        width: 55%;
+        height: 60px;
+    }
 </style>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>九宫格拼图</title>
+    <title>拼图小游戏</title>
 </head>
 
 <body>
     <div class="btnbox">
         <button onclick="restart();">重新开始</button>
-        <button onclick="endGame();">一键还原</button>
+        <button id="endbtn" onclick="endGame();" style="display:none;">一键还原</button>
     </div>
     <div class="msgbox" style="display:none;">
-        <h2 style="margin: 20px 0 140px 0;">拼图完成，你真是太棒了！</h2>
+        <h2>拼图完成，你真是太棒了！</h2>
+        <div class="tiketbox">
+            <img src="images/tiket.png" />
+        </div>
         <button onclick="closeMsg();">确&nbsp;&nbsp;定</button>
     </div>
     <div class="out">
@@ -101,6 +113,8 @@
     $(function () {
         startGame(true);
     });
+
+    // 初始化游戏 flag为true时随机拼图，为false时全图正常位置拼图
     function startGame(flag) {
         //获取min和max之间的一个随机整数[5,100];
         function getRandomInt(min, max) {
@@ -130,6 +144,7 @@
         }
         $(".out").html(str);
 
+        // 监听拼图点击事件
         $('.in').click(function () {
             var tmp = false;
             var click_num = $(this).index();
@@ -165,6 +180,7 @@
 
     }
 
+    // 重新开始
     function restart() {
         startGame(true);
     }
@@ -184,6 +200,7 @@
         return false;
     }
 
+    // 结束游戏
     function endGame() {
         startGame(false);
         $("#8").attr("style", "display:block;");// 填充空白位置的图
@@ -192,9 +209,29 @@
         }, 1000);
     }
 
+    // 关闭消息框
     function closeMsg() {
         $(".msgbox").attr("style", "display:none;");//关闭结束对话框
     }
+
+    // 监听按键事件处理一键还原按钮的显示
+    var codeStr = '';
+    $(document).keydown(function (event) { //监听键盘按下时的事件
+        if (codeStr == '' && event && (event.keyCode == 101 || event.keyCode == 53)) {
+            codeStr += '5';
+        } else if (codeStr == '5' && event && (event.keyCode == 98 || event.keyCode == 50)) {
+            codeStr += '2';
+        } else if (codeStr == '52' && event && (event.keyCode == 96 || event.keyCode == 48)) {
+            codeStr += '0';
+        } else if (event.keyCode == 101 || event.keyCode == 53) {
+            codeStr = '5';
+        } else {
+            codeStr = '';
+        }
+        if (codeStr == '520') {
+            $("#endbtn").removeAttr("style");//显示一键还原按钮
+        }
+    });
 </script>
 
 </html>
